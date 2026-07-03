@@ -14,7 +14,7 @@ function formatSegundos(total: number): string {
   imports: [LucideAngularModule],
   template: `
     <div
-      class="relative rounded-xl border p-4 transition"
+      class="relative cursor-pointer rounded-xl border p-4 transition active:scale-[0.98]"
       [class.border-yellow-500/50]="esMejor()"
       [class.border-zinc-300]="!esMejor()"
       [class.dark:border-zinc-800]="!esMejor()"
@@ -24,6 +24,7 @@ function formatSegundos(total: number): string {
       [class.shadow-[0_0_16px_#eab3081f]]="esMejor()"
       [class.bg-zinc-100]="!esMejor()"
       [class.dark:bg-zinc-950]="!esMejor()"
+      (click)="seleccionar.emit(sesion())"
     >
       @if (esMejor()) {
         <div class="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -39,7 +40,7 @@ function formatSegundos(total: number): string {
           <span class="text-xl font-bold text-zinc-900 dark:text-white">{{ sesion().piezas }}</span>
           <button
             class="rounded-lg p-1.5 text-zinc-400 transition hover:text-red-500"
-            (click)="eliminar.emit(sesion().id)"
+            (click)="$event.stopPropagation(); eliminar.emit(sesion().id)"
             aria-label="Eliminar sesión"
           >
             <lucide-angular name="trash-2" [size]="16"></lucide-angular>
@@ -53,6 +54,7 @@ function formatSegundos(total: number): string {
 export class HistorialItemComponent {
   readonly sesion = input.required<Sesion>();
   readonly esMejor = input(false);
+  readonly seleccionar = output<Sesion>();
   readonly eliminar = output<string>();
 
   readonly formatSegundos = formatSegundos;

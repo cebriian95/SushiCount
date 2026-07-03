@@ -3,6 +3,7 @@ import { SushiStoreService } from '../../core/services/sushi-store.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { HistorialItemComponent } from './historial-item';
 import { ModalConfirmacionComponent } from '../../shared/ui/modal-confirmacion';
+import type { Sesion } from '../../shared/models/sesion.model';
 
 type Orden = 'piezas' | 'tiempo';
 
@@ -58,11 +59,12 @@ type Orden = 'piezas' | 'tiempo';
         </div>
 
         <!-- Lista -->
-        <div class="flex-1 space-y-2 overflow-y-auto px-5 py-4">
+        <div class="flex-1 flex min-h-0 flex-col gap-4 overflow-y-auto px-5 py-4">
           @for (sesion of sesionesOrdenadas(); track sesion.id) {
             <app-historial-item
               [sesion]="sesion"
               [esMejor]="sesion.id === mejorId()"
+              (seleccionar)="seleccionarSesion.emit($event)"
               (eliminar)="prepararEliminar($event)"
             />
           }
@@ -88,6 +90,7 @@ type Orden = 'piezas' | 'tiempo';
 export class HistorialPanelComponent {
   readonly visible = input(false);
   readonly cerrar = output<void>();
+  readonly seleccionarSesion = output<Sesion>();
 
   readonly orden = signal<Orden>('piezas');
   sesionAEliminar: string | null = null;

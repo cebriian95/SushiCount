@@ -65,14 +65,14 @@ export class SushiStoreService {
       } catch { }
     } else {
       this.logros.set([
-        { id: 'logro_5', nombre: 'Principiante', piezasRequeridas: 5, desbloqueado: false },
-        { id: 'logro_10', nombre: 'Aprendiz', piezasRequeridas: 10, desbloqueado: false },
-        { id: 'logro_15', nombre: 'Comensal', piezasRequeridas: 15, desbloqueado: false },
-        { id: 'logro_20', nombre: 'Hambriento', piezasRequeridas: 20, desbloqueado: false },
-        { id: 'logro_30', nombre: 'Devorador', piezasRequeridas: 30, desbloqueado: false },
-        { id: 'logro_50', nombre: 'Maestro sushi', piezasRequeridas: 50, desbloqueado: false },
-        { id: 'logro_70', nombre: 'Leyenda', piezasRequeridas: 70, desbloqueado: false },
-        { id: 'logro_100', nombre: 'Dios del sushi', piezasRequeridas: 100, desbloqueado: false },
+        { id: 'logro_5', nombre: 'Abriendo apetito', piezasRequeridas: 5, desbloqueado: false },
+        { id: 'logro_10', nombre: 'Esto está muy rico', piezasRequeridas: 10, desbloqueado: false },
+        { id: 'logro_15', nombre: 'Llegaste a la primera ronda', piezasRequeridas: 15, desbloqueado: false },
+        { id: 'logro_20', nombre: 'Empezando a llenarse', piezasRequeridas: 20, desbloqueado: false },
+        { id: 'logro_30', nombre: 'Se hace cuesta arriba', piezasRequeridas: 30, desbloqueado: false },
+        { id: 'logro_50', nombre: 'Quien pidió esto', piezasRequeridas: 50, desbloqueado: false },
+        { id: 'logro_70', nombre: 'Me muero', piezasRequeridas: 70, desbloqueado: false },
+        { id: 'logro_100', nombre: 'Gordo puto', piezasRequeridas: 100, desbloqueado: false },
       ]);
     }
   }
@@ -95,7 +95,7 @@ export class SushiStoreService {
   }
 
   iniciarSesion(): void {
-    const nueva: SesionActiva = { fechaInicio: Date.now(), piezas: 0 };
+    const nueva: SesionActiva = { fechaInicio: Date.now(), piezas: 0, piezasTimestamps: [] };
     this.sesionActiva.set(nueva);
     this.guardarSesionActiva();
   }
@@ -104,7 +104,11 @@ export class SushiStoreService {
     const sa = this.sesionActiva();
     if (!sa) return;
     const nuevasPiezas = sa.piezas + 1;
-    const actualizada: SesionActiva = { ...sa, piezas: nuevasPiezas };
+    const actualizada: SesionActiva = {
+      ...sa,
+      piezas: nuevasPiezas,
+      piezasTimestamps: [...sa.piezasTimestamps, Date.now()],
+    };
     this.sesionActiva.set(actualizada);
     this.guardarSesionActiva();
     this.checkLogrosEnVivo(nuevasPiezas);
@@ -126,6 +130,7 @@ export class SushiStoreService {
       fechaInicio: sa.fechaInicio,
       piezas: sa.piezas,
       duracionSegundos: Math.round((now - sa.fechaInicio) / 1000),
+      piezasTimestamps: sa.piezasTimestamps,
     };
 
     this.historial.update(h => [...h, sesion]);

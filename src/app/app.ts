@@ -6,8 +6,9 @@ import { ResumenComponent } from './features/resumen/resumen';
 import { HistorialPanelComponent } from './features/historial/historial-panel';
 import { HistorialPageComponent } from './features/historial/historial-page';
 import { LogrosPanelComponent } from './features/logros/logros-panel';
+import type { Sesion } from './shared/models/sesion.model';
 
-type Vista = 'dashboard' | 'comer' | 'resumen' | 'historial';
+type Vista = 'dashboard' | 'comer' | 'resumen' | 'historial' | 'detalle';
 
 const TEMA_KEY = 'sushicount_tema';
 
@@ -41,7 +42,15 @@ const TEMA_KEY = 'sushicount_tema';
         }
       }
       @case ('historial') {
-        <app-historial-page (volver)="vistaActual.set('dashboard')" />
+        <app-historial-page
+          (volver)="vistaActual.set('dashboard')"
+          (seleccionarSesion)="sesionParaDetalle.set($event); vistaActual.set('detalle')"
+        />
+      }
+      @case ('detalle') {
+        @if (sesionParaDetalle(); as sesion) {
+          <app-resumen [sesion]="sesion" [titulo]="sesion.nombre" (volver)="vistaActual.set('historial')" />
+        }
       }
     }
 
@@ -49,6 +58,7 @@ const TEMA_KEY = 'sushicount_tema';
     <app-historial-panel
       [visible]="historialAbierto"
       (cerrar)="historialAbierto = false"
+      (seleccionarSesion)="sesionParaDetalle.set($event); historialAbierto = false; vistaActual.set('detalle')"
     />
 
     <!-- Logros panel lateral -->
@@ -72,6 +82,7 @@ const TEMA_KEY = 'sushicount_tema';
 })
 export class App implements OnInit {
   readonly vistaActual = signal<Vista>('dashboard');
+  readonly sesionParaDetalle = signal<Sesion | null>(null);
   historialAbierto = false;
   logrosAbierto = false;
   readonly logroToast = signal<{ nombre: string; piezasRequeridas: number } | null>(null);
