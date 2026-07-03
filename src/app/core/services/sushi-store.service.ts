@@ -121,7 +121,7 @@ export class SushiStoreService {
     const año = ahora.getFullYear();
 
     const sesion: Sesion = {
-      id: crypto.randomUUID(),
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 9),
       nombre: `Sushi ${dia}-${mes}-${año}`,
       fechaInicio: sa.fechaInicio,
       piezas: sa.piezas,
